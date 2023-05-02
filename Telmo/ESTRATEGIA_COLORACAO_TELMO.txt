@@ -1,0 +1,35 @@
+//----------------------------------------------------------------------------------
+// Nome: ESTRATEGIA_COLORACAO_TELMO
+//
+// Este indicador é um indicador de coloração seguidor de tendência.
+//----------------------------------------------------------------------------------
+const 
+  HiloActivatorValue = 4;
+  RsiValue = 14;
+
+input 
+  AverageValue(21);
+
+var 
+  FastAverage : Float;
+  FastAverageSuper : Float;
+
+begin 
+
+  FastAverage := MediaExp(AverageValue, Close);
+  FastAverageSuper := MediaExp(5, Close);
+
+  if (Close > FastAverage) and (Close > HiloActivator(HiloActivatorValue)) and (Rsi(RsiValue,0) > 50) and (FastAverageSuper > FastAverage) then
+    PaintBar(clGreen)
+  else if (Close < FastAverage) and (Close < HiloActivator(HiloActivatorValue)) and (Rsi(RsiValue,0) < 50) and (FastAverageSuper < FastAverage) then
+    PaintBar(clRed)
+  else 
+    begin 
+      if (FastAverageSuper > FastAverage) and (Close > FastAverage) and (Rsi(RsiValue,0) > 50) then
+        PaintBar(clGreen)
+      else if (FastAverageSuper < FastAverage) and (Close < FastAverage) and (Rsi(RsiValue,0) < 50) then
+        PaintBar(clRed)
+      else
+        PaintBar(clYellow);
+    end;
+end;

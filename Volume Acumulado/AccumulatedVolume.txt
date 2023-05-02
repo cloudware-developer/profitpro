@@ -1,0 +1,34 @@
+//----------------------------------------------------------------------------------
+// Nome: AccumulatedVolume
+//
+// Indicador que plota um histograma de volume acumulado tanto no lado da compra
+// quando no lado da venda, colorindo verde para volume de compra e vermelho para
+// volume venda.
+//----------------------------------------------------------------------------------
+input
+  period(5);
+var
+  tf,x,y,vAcum : Real;
+  i,color      : Integer;
+begin
+  tf := TopBottomDetector(period);
+  if (tf <> 0) e (CurrentBar <> i) then
+    begin
+      i := CurrentBar;
+      Se (x = 0) entao
+        x := tf
+      Senao 
+        y := tf;
+    end;vAcum := Summation(Volume,CurrentBar - i);
+  Plot(vAcum);
+  // Coloração
+  if (x <> 0) e (y <> 0) then
+    begin
+      if (y > x) then
+        color := clRed
+      else if (y < x) then
+        color := clLime;
+      x := y;
+      y := 0;
+    end;SetPlotColor(1,color);
+end;

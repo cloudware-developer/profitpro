@@ -1,0 +1,43 @@
+//----------------------------------------------------------------------------------
+// Nome: JurikMovingAverage
+//
+// Este indicador é uma média móvel suavizada onde a linha tende a se manter perto
+// do preço sem muitos ruídos, diferentes das médias aritméticas e exponenciais
+// existentes atualmente, é uma alternativa apenas para linhas mais expressivas
+// ao preço.
+//----------------------------------------------------------------------------------
+input
+  length(32);
+  phase(50);
+  pwr(2);
+  src(Close);
+  highlightMovements(true);
+var
+  e0,e1,e2,jma,alpha,beta,phaseRatio : Real;
+  color                              : Integer;
+Inicio
+  if (phase < - 100) then
+    phaseRatio := 0.5
+  else if (phase > 100) then
+    phaseRatio := 2.5
+  else 
+    phaseRatio := (phase / 100) + 1.5;
+  beta := 0.45 * (length - 1) / (0.45 * (length - 1) + 2);
+  alpha := Power(beta,pwr);
+  jma := 0.0;
+  e0 := 0.0;
+  e0 := (1 - alpha) * src + alpha * e0[1];
+  e1 := 0.0;
+  e1 := (src - e0) * (1 - beta) + beta * e1[1];
+  e2 := 0.0;
+  e2 := (e0 + phaseRatio * e1 - jma[1]) * Power(1 - alpha,2) + Power(alpha,2) * e2[1];
+  jma := e2 + jma[1];
+  Plot(jma);
+  if (jma > jma[1]) then
+    color := clVerde
+  else 
+    color := clVermelho;
+  if not (highlightMovements) then
+    color := clAmarelo;
+  SetPlotColor(1,color);
+Fim;

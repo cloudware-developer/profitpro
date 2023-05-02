@@ -1,0 +1,12 @@
+Input 
+FastAverage(7);     // Média rápida.
+SlowAverage(21);    // Média lenta.
+
+Begin 
+    If (OBV > OBVAvg(FastAverage,0)) then
+      PaintBar(clGreen)
+    Else If (OBV < OBVAvg(FastAverage,0)) then
+      PaintBar(clRed)
+    Else
+      PaintBar(clWhite);
+End;

@@ -1,0 +1,42 @@
+//----------------------------------------------------------------------------------
+// Nome: ParabolicSarCloud
+//
+// Indicador que plota nuvens em tendências de compra e de venda de um ativo
+// este indicador pode ser problemático quando o preço esta lateralizado por
+// em períodos mais curtos, ficando dificil de identificar uma nuvem de
+// tendência.
+//----------------------------------------------------------------------------------
+input
+  factor(0.02);
+  limit(0.2);
+  fontSize(12);
+var
+  psar,dir,midPrice               : Real;
+  psarColor                       : Inteiro;
+  buySignal,sellSignal,changeCond : Booleano;
+begin
+  midPrice := (open + high + low + close) / 4;
+  psar := ParabolicSAR(factor,limit);
+  if (psar < close) then
+    dir := 1
+  else 
+    dir := - 1;
+  buySignal := (dir[1] = - 1) e (dir = 1);
+  sellSignal := (dir = - 1) e (dir[1] = 1);
+  changeCond := dir <> dir[1];
+  if buySignal then
+    PlotText("C",clLime,0,fontSize);
+  if sellSignal then
+    PlotText("V",clRed, -1,fontSize);
+  Plot(psar);
+  Plot2(midPrice);
+  if (dir = 1) then
+    psarColor := clLime
+  else 
+    psarColor := clRed;
+  SetPlotColor(1,psarColor);
+  PaintBar(psarColor);
+  if (changeCond) then
+    NoPlot(1);
+  NoPlot(2);
+end;

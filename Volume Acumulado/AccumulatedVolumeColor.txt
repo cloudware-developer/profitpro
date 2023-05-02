@@ -1,0 +1,32 @@
+//----------------------------------------------------------------------------------
+// Nome: AccumulatedVolumeColor
+//
+// Indicador usando em conjunto com AccumulatedVolume, porem este é usado para apenas
+// colorir os candles do grafico permitindo uma melhor visualização entre os dois//
+// indicadores quando usando em conjunto.
+//----------------------------------------------------------------------------------
+var
+  tf,x,y,vAcum : Real;
+  i,color    : Integer;
+begin
+  tf := TopBottomDetector(5);
+  if (tf <> 0) e (CurrentBar <> i) then
+    begin
+      i := CurrentBar;
+      if (x = 0) then
+        x := tf
+      else 
+        y := tf;
+    end;
+  vAcum := Summation(Volume,CurrentBar - i);
+  if (x <> 0) e (y <> 0) then
+    begin
+      if (y > x) then
+        color := clRed
+      else if (y < x) then
+        color := clLime;
+      x := y;
+      y := 0;
+    end;
+    PaintBar(color);
+end;

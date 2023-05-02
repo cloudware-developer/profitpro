@@ -1,0 +1,42 @@
+//----------------------------------------------------------------------------------
+// Nome: TrandMadrid
+//
+// Indicador que plota em forma de histograma as zonas de percepção de pontos
+// mais rentaveis dentro de uma tendência, tanto para tendências de compras
+// quando para tendências de vendas, detectando os pontos de uma possivel
+// reversão ou um respiro para continuar a tendência em que o ativo se
+// encontra.
+//----------------------------------------------------------------------------------
+const
+  len    = 34;
+  ref    = 13;
+  sqzLen = 9;
+var
+  mm,closema,refma,sqzma : Real;
+  c1,c2,c3 : Integer;
+begin
+  mm := MediaExp(len,close);
+  closema := close - mm;
+  sqzma := MediaExp(sqzLen,close) - mm;   
+  refma := MediaExp(ref,close) - mm;
+  Plot(closema);
+  Plot2(sqzma);
+  Plot3(refma);
+  if (closema >= 0) then
+    c1 := clAqua
+  else 
+    c1 := clFuchsia;
+  if (sqzma >= 0) then
+    c2 := clLime
+  else 
+    c2 := clRed;
+  if ((refma > 0) and (closema < refma)) or ((refma < 0) and (closema > refma)) then
+    c3 := clYellow
+  else if (refma >= 0) then
+    c3 := clGreen
+  else 
+    c3 := clMaroon;
+  SetPlotColor(1,c1);
+  SetPlotColor(2,c2);
+  SetPlotColor(3,c3);
+end;

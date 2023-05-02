@@ -1,0 +1,30 @@
+Input FastAverage(21);
+Begin 
+
+    //////////////////////////////////////////////////////////////////////////
+    // Regra de entrada na compra.
+    //////////////////////////////////////////////////////////////////////////
+    If (BuyPosition = 0) And (MediaExp(2,Close) > MediaExp(FastAverage,Close)) And (OBV > OBVAvg(FastAverage,0)) then
+    Begin
+      BuyAtMarket(1);
+    End;
+
+    If (BuyPosition > 0) And (MediaExp(2,Close) < MediaExp(FastAverage,Close)) And (OBV < OBVAvg(FastAverage,0)) then
+    Begin 
+      SellShortAtMarket(1);
+    End;
+
+    //////////////////////////////////////////////////////////////////////////
+    // Regra de entrada na venda.
+    //////////////////////////////////////////////////////////////////////////
+    If (SellPosition = 0) And (MediaExp(2,Close) < MediaExp(FastAverage,Close)) And (OBV < OBVAvg(FastAverage,0)) then
+    Begin
+      SellShortAtMarket(1);
+    End;
+    
+    If (SellPosition > 0) And (MediaExp(2,Close) > MediaExp(FastAverage,Close)) And (OBV > OBVAvg(FastAverage,0)) then
+    Begin 
+      BuyToCoverAtMarket(1);
+    End;
+    
+End;

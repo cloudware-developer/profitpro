@@ -1,0 +1,77 @@
+//----------------------------------------------------------------------------------
+// Nome: ESTRATEGIA_EXECUCAO_TELMO
+//
+// Este indicador é um indicador de execução seguidor de tendência.
+//----------------------------------------------------------------------------------
+const 
+  HiloActivatorValue = 4;
+  RsiValue = 14;
+
+input 
+  AverageValue(21);
+
+var 
+  FastAverage : Float;
+  FastAverageSuper : Float;
+  Semaphore : Float;
+
+begin 
+  
+  FastAverage := MediaExp(AverageValue, Close);
+  FastAverageSuper := MediaExp(5, Close);
+  Semaphore := 0;
+
+  if (Close > FastAverage) and (Close > HiloActivator(HiloActivatorValue)) and (Rsi(RsiValue,0) > 50) and (FastAverageSuper > FastAverage) then
+    begin
+      if (SellPosition = 0) and (BuyPosition = 0) then
+      Semaphore := 1;
+    end
+  else if (Close < FastAverage) and (Close < HiloActivator(HiloActivatorValue)) and (Rsi(RsiValue,0) < 50) and (FastAverageSuper < FastAverage) then
+    begin
+      if (SellPosition = 0) and (BuyPosition = 0) then
+      Semaphore := 2;
+    end
+  else 
+    begin 
+      if (FastAverageSuper > FastAverage) and (Rsi(RsiValue,0) > 50) and (Close > FastAverage) then
+      begin
+        if (SellPosition = 0) and (BuyPosition = 0) then
+        Semaphore := 1;
+      end
+      else if (FastAverageSuper < FastAverage) and (Rsi(RsiValue,0) < 50) and (Close < FastAverage) then
+      begin
+        if (SellPosition = 0) and (BuyPosition = 0) then
+        Semaphore := 2;
+      end
+      else 
+        Semaphore := 3;
+    end;
+    
+  
+    //////////////////////////////////////////////////////////////////////////
+    // Regra de entrada na compra.
+    //////////////////////////////////////////////////////////////////////////
+    If (BuyPosition = 0) and (Semaphore = 1) and (MediaExp(2,Close) > FastAverage) and (OBV > OBVAvg(AverageValue,0)) then
+    Begin
+      BuyAtMarket;
+    End;
+
+    If (BuyPosition > 0) and (Semaphore <> 1) and (MediaExp(2,Close) < FastAverage) and (OBV < OBVAvg(AverageValue,0)) then
+    Begin 
+      SellShortAtMarket;
+    End;    
+    
+    //////////////////////////////////////////////////////////////////////////
+    // Regra de entrada na venda.
+    //////////////////////////////////////////////////////////////////////////
+    If (SellPosition = 0) and (Semaphore = 2) and (MediaExp(2,Close) < FastAverage) And (OBV < OBVAvg(AverageValue,0)) then
+    Begin
+      SellShortAtMarket;
+    End;
+    
+    If (SellPosition > 0) and (Semaphore <> 2) and (MediaExp(2,Close) > FastAverage) And (OBV > OBVAvg(AverageValue,0)) then
+    Begin 
+      BuyToCoverAtMarket;
+    End;    
+     
+end;
